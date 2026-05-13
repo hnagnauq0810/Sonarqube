@@ -31,7 +31,8 @@ addopts = "-ra"
 
 [tool.coverage.run]
 branch = true
-source = ["src/sonarqube_code_quality"]
+source = ["src"]
+relative_files = true
 
 [tool.coverage.report]
 show_missing = true

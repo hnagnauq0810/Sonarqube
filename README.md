@@ -124,7 +124,7 @@ After login:
 
 1. Change the admin password.
 2. Create a project manually.
-3. Use project key: `sonarqube-code-quality`.
+3. Use project key: `SonarQube-Code-Quality`.
 4. Generate a project analysis token.
 5. Store the token securely.
 
@@ -139,7 +139,7 @@ sonar-project.properties
 Important settings:
 
 ```properties
-sonar.projectKey=sonarqube-code-quality
+sonar.projectKey=SonarQube-Code-Quality
 sonar.projectName=SonarQube Code Quality
 sonar.sources=src
 sonar.tests=tests
@@ -157,14 +157,16 @@ pytest --cov=src --cov-report=xml --cov-report=term-missing
 
 Then run scanner.
 
-For macOS/Windows Docker Desktop:
+For Windows Git Bash / macOS Docker Desktop:
 
 ```bash
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   -e SONAR_HOST_URL="http://host.docker.internal:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -v "/$(pwd):/usr/src" \
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
 For Linux:
@@ -175,7 +177,9 @@ docker run --rm \
   -e SONAR_HOST_URL="http://localhost:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
   -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
 ## GitHub Actions integration
@@ -290,7 +294,7 @@ For the bonus:
 
 1. Install SonarLint in VS Code or PyCharm.
 2. Connect SonarLint to your SonarQube server.
-3. Bind the IDE project to `sonarqube-code-quality`.
+3. Bind the IDE project to `SonarQube-Code-Quality`.
 4. Take a screenshot showing SonarLint connected and analyzing the project.
 
 ## Submission checklist

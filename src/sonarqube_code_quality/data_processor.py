@@ -32,7 +32,9 @@ def process_csv_items(data: str | None) -> ProcessedData:
     if not isinstance(data, str):
         raise TypeError("data must be a string or None")
 
-    normalized_items = [item.strip().lower() for item in data.split(",") if item.strip()]
+    normalized_items = [
+        item.strip().lower() for item in data.split(",") if item.strip()
+    ]
     return ProcessedData(
         total_items=len(normalized_items),
         unique_items=len(set(normalized_items)),

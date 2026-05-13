@@ -15,11 +15,13 @@ To create a failing SonarQube run for screenshots, temporarily copy it into the 
 ```bash
 cp examples/issues_before.py src/sonarqube_code_quality/issues_before.py
 pytest --cov=src --cov-report=xml
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   -e SONAR_HOST_URL="http://host.docker.internal:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -v "/$(pwd):/usr/src" \
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
 After taking the failing Quality Gate screenshot, remove the copied file:
@@ -27,11 +29,13 @@ After taking the failing Quality Gate screenshot, remove the copied file:
 ```bash
 rm src/sonarqube_code_quality/issues_before.py
 pytest --cov=src --cov-report=xml
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   -e SONAR_HOST_URL="http://host.docker.internal:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -v "/$(pwd):/usr/src" \
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
 ## Before/after table

@@ -86,7 +86,7 @@ Trong giao diện SonarQube:
 3. Đặt project key:
 
 ```text
-sonarqube-code-quality
+SonarQube-Code-Quality
 ```
 
 4. Đặt project name:
@@ -111,7 +111,7 @@ sonar-project.properties
 Nội dung chính:
 
 ```properties
-sonar.projectKey=sonarqube-code-quality
+sonar.projectKey=SonarQube-Code-Quality
 sonar.projectName=SonarQube Code Quality
 sonar.sources=src
 sonar.tests=tests
@@ -138,22 +138,14 @@ pytest --cov=src --cov-report=xml --cov-report=term-missing
 Nếu bạn dùng macOS hoặc Windows Docker Desktop:
 
 ```bash
-docker run --rm \
-  -e SONAR_HOST_URL="http://host.docker.internal:9000" \
-  -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
-```
+MSYS_NO_PATHCONV=1 docker run --rm \
+-e SONAR_HOST_URL="http://host.docker.internal:9000" \
+-e SONAR_TOKEN="<YOUR_TOKEN>" \
+-v "/$(pwd):/usr/src" \
+-w /usr/src \
+sonarsource/sonar-scanner-cli \
+-Dsonar.projectBaseDir=/usr/src
 
-Nếu bạn dùng Linux:
-
-```bash
-docker run --rm \
-  --network host \
-  -e SONAR_HOST_URL="http://localhost:9000" \
-  -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
 ```
 
 Sau khi chạy xong, quay lại dashboard SonarQube để xem kết quả.
@@ -163,6 +155,24 @@ Bạn cần chụp screenshot:
 - Project dashboard.
 - Metrics: bugs, vulnerabilities, code smells, coverage, duplications.
 - Quality Gate status.
+
+## 7.1 Troubleshooting (Git Bash + Docker Desktop)
+
+Neu gap loi `401 Unauthorized`:
+
+```text
+Failed to query server version ... HTTP 401 Unauthorized
+```
+
+Token SonarQube khong hop le. Hay tao token moi trong SonarQube va thay lai `SONAR_TOKEN`.
+
+Neu gap loi `Project root configuration file: NONE`, kiem tra volume mount:
+
+```bash
+MSYS_NO_PATHCONV=1 docker run --rm -v "/$(pwd):/usr/src" sonarsource/sonar-scanner-cli ls -la /usr/src
+```
+
+Output phai co file `sonar-project.properties`.
 
 ## 8. Tạo Quality Gate custom
 
@@ -196,7 +206,7 @@ New Code Coverage >= 80%
 New Duplicated Lines <= 3%
 ```
 
-Sau đó apply Quality Gate này cho project `sonarqube-code-quality`.
+Sau đó apply Quality Gate này cho project `SonarQube-Code-Quality`.
 
 ## 9. Tạo screenshot Quality Gate fail
 
@@ -221,14 +231,15 @@ pytest --cov=src --cov-report=xml --cov-report=term-missing
 Chạy lại SonarQube scanner:
 
 ```bash
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   -e SONAR_HOST_URL="http://host.docker.internal:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -v "/$(pwd):/usr/src" \
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
-Nếu dùng Linux, thay bằng lệnh có `--network host` như phần trên.
 
 Sau đó chụp screenshot Quality Gate fail hoặc issues mới được phát hiện.
 
@@ -244,11 +255,13 @@ Chạy lại:
 
 ```bash
 pytest --cov=src --cov-report=xml --cov-report=term-missing
-docker run --rm \
+MSYS_NO_PATHCONV=1 docker run --rm \
   -e SONAR_HOST_URL="http://host.docker.internal:9000" \
   -e SONAR_TOKEN="<YOUR_TOKEN>" \
-  -v "$(pwd):/usr/src" \
-  sonarsource/sonar-scanner-cli
+  -v "/$(pwd):/usr/src" \
+  -w /usr/src \
+  sonarsource/sonar-scanner-cli \
+  -Dsonar.projectBaseDir=/usr/src
 ```
 
 Chụp screenshot Quality Gate pass.
@@ -353,7 +366,7 @@ Nếu muốn lấy bonus +10:
 1. Mở VS Code hoặc PyCharm.
 2. Cài extension/plugin SonarLint.
 3. Connect SonarLint tới SonarQube server.
-4. Bind project với project key `sonarqube-code-quality`.
+4. Bind project với project key `SonarQube-Code-Quality`.
 5. Chụp screenshot SonarLint đã connected và đang phân tích project.
 
 ## 15. Checklist screenshot cần nộp

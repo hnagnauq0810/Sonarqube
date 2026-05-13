@@ -37,7 +37,9 @@ def test_get_required_secret_reads_environment(monkeypatch: pytest.MonkeyPatch) 
     assert get_required_secret("APP_SECRET") == "safe-secret-from-env"
 
 
-def test_get_required_secret_fails_when_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_get_required_secret_fails_when_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.delenv("APP_SECRET", raising=False)
 
     with pytest.raises(RuntimeError, match="APP_SECRET"):
