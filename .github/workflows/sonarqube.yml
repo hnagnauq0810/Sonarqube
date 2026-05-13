@@ -66,5 +66,5 @@ jobs:
             -v "${PWD}:/usr/src" `
             -w /usr/src `
             sonarsource/sonar-scanner-cli `
-            -Dsonar.projectBaseDir=/usr/src `
-            -Dsonar.qualitygate.wait=true
+            --define "sonar.projectBaseDir=/usr/src" `
+            --define "sonar.qualitygate.wait=true"
