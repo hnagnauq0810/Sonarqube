@@ -60,7 +60,25 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          $scannerHostUrl = $env:SONAR_HOST_URL `
+          $hostUrl = $env:SONAR_HOST_URL.Trim()
+          $scannerToken = $env:SONAR_TOKEN.Trim()
+
+          if ([string]::IsNullOrWhiteSpace($scannerToken)) {
+            throw "SONAR_TOKEN is empty. Please set repository secret SONAR_TOKEN."
+          }
+
+          $basicAuth = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${scannerToken}:"))
+          $authHeaders = @{ Authorization = "Basic $basicAuth" }
+          $authResult = Invoke-RestMethod `
+            -Uri "$hostUrl/api/authentication/validate" `
+            -Headers $authHeaders `
+            -Method GET
+
+          if (-not $authResult.valid) {
+            throw "SONAR_TOKEN is invalid for $hostUrl. Regenerate token and update GitHub secret SONAR_TOKEN."
+          }
+
+          $scannerHostUrl = $hostUrl `
             -replace "://localhost", "://host.docker.internal" `
             -replace "://127.0.0.1", "://host.docker.internal"
 
@@ -68,7 +86,7 @@ jobs:
 
           docker run --rm `
             -e SONAR_HOST_URL="$scannerHostUrl" `
-            -e SONAR_TOKEN="$env:SONAR_TOKEN" `
+            -e SONAR_TOKEN="$scannerToken" `
             -v "${PWD}:/usr/src" `
             -w /usr/src `
             sonarsource/sonar-scanner-cli `
