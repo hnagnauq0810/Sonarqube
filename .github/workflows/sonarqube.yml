@@ -60,8 +60,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          $scannerHostUrl = $env:SONAR_HOST_URL `
+            -replace "://localhost", "://host.docker.internal" `
+            -replace "://127.0.0.1", "://host.docker.internal"
+
+          Write-Host "Using SonarQube URL for scanner container: $scannerHostUrl"
+
           docker run --rm `
-            -e SONAR_HOST_URL="$env:SONAR_HOST_URL" `
+            -e SONAR_HOST_URL="$scannerHostUrl" `
             -e SONAR_TOKEN="$env:SONAR_TOKEN" `
             -v "${PWD}:/usr/src" `
             -w /usr/src `
